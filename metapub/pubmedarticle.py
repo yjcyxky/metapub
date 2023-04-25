@@ -283,6 +283,15 @@ class PubMedArticle(MetaPubObject):
 
     def _get_url(self):
         return 'https://ncbi.nlm.nih.gov/pubmed/'+str(self.pmid)
+    
+    # define a recursive function to concatenate the text content of a tag and its children
+    def get_text(self, tag):
+        text = tag.text or ''
+        for child in tag:
+            text += self.get_text(child)
+            if child.tail:
+                text += child.tail
+        return text
 
     def _get_abstract(self):
         abstracts = self.content.findall(self._root + '/Article/Abstract/AbstractText')
@@ -290,10 +299,11 @@ class PubMedArticle(MetaPubObject):
             return self._get(self._root+'/Article/Abstract/AbstractText')
 
         if len(abstracts) == 1:
-            elem = abstracts[0]
-            if len(elem.getchildren()):
-                return self._clean_html(elem)
-            return elem.text
+            # elem = abstracts[0]
+            # if len(elem.getchildren()):
+            #     return self._clean_html(elem)
+            # return elem.text
+            return self.get_text(abstracts[0])
 
         # this is a type of PMA with several AbstractText listings (like a Book)
         abd = OrderedDict()
