@@ -308,7 +308,8 @@ class PubMedArticle(MetaPubObject):
         # this is a type of PMA with several AbstractText listings (like a Book)
         abd = OrderedDict()
         for ab in abstracts:
-            abd[ab.get('Label')] = ab.text
+            # abd[ab.get('Label')] = ab.text
+            abd[ab.get('Label')] = self.get_text(ab)
         return '\n'.join(['%s: %s' % (key, val) for key, val in abd.items()])
 
     def _get_authors(self):
